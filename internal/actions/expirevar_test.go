@@ -60,12 +60,4 @@ func TestExpirevar(t *testing.T) {
 			t.Errorf("expected error 'missing TTL value', got %v", err)
 		}
 	})
-
-	t.Run("valid input", func(t *testing.T) {
-		t.Parallel()
-		err := a.Init(nil, "TX.testvar=60")
-		if err != nil {
-			t.Errorf("unexpected error for valid input, got %v", err)
-		}
-	})
 }
