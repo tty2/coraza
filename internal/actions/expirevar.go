@@ -48,7 +48,7 @@ func (a *expirevarFn) Init(_ plugintypes.RuleMetadata, data string) error {
 	colKey, colVal, colOk := strings.Cut(key, ".")
 
 	// Ensure the collection is one of the editable ones
-	available := []string{"TX", "USER", "GLOBAL", "RESOURCE", "SESSION", "IP"}
+	available := []string{"USER", "GLOBAL", "RESOURCE", "SESSION", "IP"}
 	if !utils.InSlice(strings.ToUpper(colKey), available) {
 		return errors.New("invalid collection, available collections are: " + strings.Join(available, ", "))
 	}
@@ -69,7 +69,7 @@ func (a *expirevarFn) Init(_ plugintypes.RuleMetadata, data string) error {
 		}
 	}
 
-	// Parse the TTL value
+	// Parse TTL value
 	if !ttlOk {
 		return errors.New("missing TTL value")
 	}
@@ -82,14 +82,11 @@ func (a *expirevarFn) Init(_ plugintypes.RuleMetadata, data string) error {
 }
 
 func (a *expirevarFn) Evaluate(r plugintypes.RuleMetadata, tx plugintypes.TransactionState) {
-	// TODO: TX support
-	// It has collection.Map interface and will not be converted to collection.Persistent
 	col, ok := tx.Collection(a.collection).(collection.Persistent)
 	if !ok {
 		tx.DebugLogger().Error().Msg("collection in expirevar is not editable")
 		return
 	}
-	// update the TTL
 	key := a.key.Expand(tx)
 	col.SetTTL(key, a.ttl)
 }
